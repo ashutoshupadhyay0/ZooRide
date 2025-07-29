@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zoo Ride Ticket</title>
+    <link rel="stylesheet" href="printTicket.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col justify-center items-center p-4">
+    <img alt="Background image of a zoo with giraffes and zebras" class="absolute inset-0 w-full h-full object-cover"
+        height="1080" src="./Images/f2.jpg" width="1920" />
+    <div id="ticketContainer" role="main" aria-label="Zoo Ride Ticket">
+        <h2 class="text-center text-2xl font-semibold text-green-700">Your Ticket QR Code</h2>
+        <canvas id="qrcode"></canvas>
+        <div id="ticketDetails">
+            
+        </div>
+    </div>
+
+    <button id="downloadBtn" aria-label="Download ticket as image" onclick="downloadTicket()">Download Ticket</button>
+    
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const contact = params.get("contact") || "N/A";
+        const email = params.get("email") || "N/A";
+        const people = params.get("numberofpeople") || "N/A";
+        const totalprice = params.get("totalprice") || "N/A";
+        const tax = params.get("tax") || "N/A";
+        const taxID = params.get("taxID") || "N/A";
+        const invoiceId = params.get("invoiceId") || "N/A";
+        const date = params.get("date") || "N/A";
+        const time = params.get("time") || "N/A";
+
+        const ticketText = `
+                <strong>Contact:</strong> ${contact}<br>
+                <strong>Email:</strong> ${email}<br>
+                <strong>Number of People:</strong> ${people}<br>
+                <strong>Total Price:</strong> ₹${totalprice}<br>
+                <strong>Tax:</strong> ${tax}<br>
+                <strong>Tax ID:</strong> ${taxID}<br>
+                <strong>Invoice ID:</strong> ${invoiceId}<br>
+                <strong>Date:</strong> ${date}<br>
+                <strong>Time:</strong> ${time}
+            `;
+
+        document.getElementById("ticketDetails").innerHTML = ticketText;
+
+        const qrText = `Contact: ${contact}
+                    Email: ${email}
+                    People: ${people}
+                    Total: ₹${totalprice}
+                    Tax: ${tax}
+                    TaxID: ${taxID}
+                    InvoiceID: ${invoiceId}
+                    Date: ${date}
+                    Time: ${time}`; 
+
+       
+        QRCode.toCanvas(document.getElementById('qrcode'), qrText, function (error) {
+                    if (error) console.error(error);
+        });
+
+        function downloadTicket() {
+            html2canvas(invoiceId).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `${invoiceId}.png`; 
+                link.click();
+            }
+        )}
+
+       
+    </script>
+    
+    
+</body>
+
+</html>
